@@ -1,0 +1,24 @@
+# pip install -U langchain-tavily
+from google.adk.agents.llm_agent import Agent
+from google.adk.tools.langchain_tool import LangchainTool
+from langchain_tavily import TavilySearch
+
+# 1. Create a langchain TavilySearch tool
+tavily_search = TavilySearch(
+    max_results=5,
+    topics="general"
+)
+
+# 2. Wrap it so adk can use it
+tavily_tool = LangchainTool(tool=tavily_search)
+
+# 3. Give it to agent like any other tool
+root_agent = Agent(
+    model='gemini-3.5-flash',
+    name='root_agent',
+    description='A helpful assistant that can search the web.',
+    instruction=('Answer user questions accurately.'
+    "use google search when you need current information"
+    "or need to verify facts"),
+    tools=[tavily_tool],
+)
